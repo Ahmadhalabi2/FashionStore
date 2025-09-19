@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Fashion Store</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081559.png">
+    <style>html { scroll-behavior: smooth; }</style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="advanced-animations.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-store"></i> Fashion Store</h2>
+                <p>Admin Dashboard</p>
+
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-section="overview">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Overview</span>
+                    </li>
+                    <li class="nav-item" data-section="categories">
+                        <i class="fas fa-tags"></i>
+                        <span>Categories</span>
+                    </li>
+                    <li class="nav-item" data-section="products">
+                        <i class="fas fa-box"></i>
+                        <span>Products</span>
+                    </li>
+                    <li class="nav-item" data-section="orders">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Orders</span>
+                    </li>
+                    <li class="nav-item" data-section="users">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                </div>
+                
+                <div class="header-right">
+                    <div class="admin-profile">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin</span>
+                    </div>
+                </div>
+                
+                <!-- Mobile Section Indicator -->
+                <div class="mobile-section-indicator" id="mobileSectionIndicator">
+                    Current: Dashboard Overview
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <div class="content-area" id="contentArea">
+                <!-- Overview Section -->
+                <section id="overview" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-tags"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalCategories">3</h3>
+                                <p>Total Categories</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalProducts">12</h3>
+                                <p>Total Products</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalOrders">0</h3>
+                                <p>Total Orders</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalUsers">0</h3>
+                                <p>Total Users</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Categories Section -->
+                <section id="categories" class="content-section">
+                    <div class="section-header">
+                        <h2>Categories Management</h2>
+                        <button class="add-btn" onclick="showAddCategoryModal()">
+                            <i class="fas fa-plus"></i> Add Category
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Icon</th>
+                                    <th>Products Count</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTable">
+                                <!-- Categories will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Products Section -->
+                <section id="products" class="content-section">
+                    <div class="section-header">
+                        <h2>Products Management</h2>
+                        <button class="add-btn" onclick="showAddProductModal()">
+                            <i class="fas fa-plus"></i> Add Product
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Rating</th>
+                                    <th>Reviews</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTable">
+                                <!-- Products will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Orders Section -->
+                <section id="orders" class="content-section">
+                    <div class="section-header">
+                        <h2>Orders Management</h2>
+                        <button class="add-btn" onclick="clearAllOrders()" style="background: #ff6b6b;">
+                            <i class="fas fa-trash"></i> Clear All Orders
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>User</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTable">
+                                <!-- Orders will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Users Section -->
+                <section id="users" class="content-section">
+                    <div class="section-header">
+                        <h2>Users Management</h2>
+                        <button class="add-btn" onclick="cleanCorruptedData()" style="background: #ffa500;">
+                            <i class="fas fa-broom"></i> Clean Data
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Join Date</th>
+                                    <th>Orders</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTable">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modals -->
+    <!-- Add Category Modal -->
+    <div class="modal" id="addCategoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Category</h3>
+                <span class="close" onclick="hideModal('addCategoryModal')">&times;</span>
+            </div>
+            <form class="modal-form" id="addCategoryForm">
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" id="categoryName" required>
+                </div>
+                <div class="form-group">
+                    <label>Icon Class (FontAwesome)</label>
+                    <input type="text" id="categoryIcon" placeholder="fas fa-tag" required>
+                </div>
+                <button type="submit" class="submit-btn">Add Category</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Category Modal -->
+    <div class="modal" id="editCategoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Category</h3>
+                <span class="close" onclick="hideModal('editCategoryModal')">&times;</span>
+            </div>
+            <form class="modal-form" id="editCategoryForm">
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" id="editCategoryName" required>
+                </div>
+                <div class="form-group">
+                    <label>Icon Class (FontAwesome)</label>
+                    <input type="text" id="editCategoryIcon" placeholder="fas fa-tag" required>
+                </div>
+                <button type="submit" class="submit-btn">Update Category</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Product Modal -->
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Product</h3>
+                <span class="close" onclick="hideModal('addProductModal')">&times;</span>
+            </div>
+            <form class="modal-form" id="addProductForm">
+                <div class="form-group">
+                    <label>Product Title</label>
+                    <input type="text" id="productTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="productCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="women">Women</option>
+                        <option value="men">Men</option>
+                        <option value="accessories">Accessories</option>
+                        <option value="bags">Bags</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Price ($)</label>
+                    <input type="number" id="productPrice" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Old Price ($)</label>
+                    <input type="number" id="productOldPrice" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" id="productImage" required>
+                </div>
+                <div class="form-group">
+                    <label>Rating (1-5)</label>
+                    <input type="number" id="productRating" min="1" max="5" step="0.1" value="4.0">
+                </div>
+                <div class="form-group">
+                    <label>Reviews Count</label>
+                    <input type="number" id="productReviews" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Badge</label>
+                    <input type="text" id="productBadge" placeholder="NEW, SALE, etc.">
+                </div>
+                <button type="submit" class="submit-btn">Add Product</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Product Modal -->
+    <div class="modal" id="editProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Product</h3>
+                <span class="close" onclick="hideModal('editProductModal')">&times;</span>
+            </div>
+            <form class="modal-form" id="editProductForm">
+                <div class="form-group">
+                    <label>Product Title</label>
+                    <input type="text" id="editProductTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="editProductCategory" required>
+                        <option value="women">Women</option>
+                        <option value="men">Men</option>
+                        <option value="accessories">Accessories</option>
+                        <option value="bags">Bags</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Price ($)</label>
+                    <input type="number" id="editProductPrice" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Old Price ($)</label>
+                    <input type="number" id="editProductOldPrice" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" id="editProductImage" required>
+                </div>
+                <div class="form-group">
+                    <label>Rating (1-5)</label>
+                    <input type="number" id="editProductRating" min="1" max="5" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Reviews Count</label>
+                    <input type="number" id="editProductReviews" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Badge</label>
+                    <input type="text" id="editProductBadge" placeholder="NEW, SALE, etc.">
+                </div>
+                <button type="submit" class="submit-btn">Update Product</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="security.js"></script>
+    <script src="notifications.js"></script>
+
+    <script src="loading-system.js"></script>
+    <script src="interactive-effects.js"></script>
+    <script src="particle-system.js"></script>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

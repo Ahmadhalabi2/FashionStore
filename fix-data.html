@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Data</title>
+</head>
+<body>
+    <h1>Fixing corrupted data...</h1>
+    <script>
+        // Clear all corrupted encrypted data
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('user_')) {
+                const value = localStorage.getItem(key);
+                // Check if it's encrypted (base64 encoded)
+                if (value && !value.startsWith('{')) {
+                    keysToRemove.push(key);
+                }
+            }
+        }
+        
+        keysToRemove.forEach(key => {
+            localStorage.removeItem(key);
+            console.log('Removed corrupted data:', key);
+        });
+        
+        // Clear other security-related items
+        localStorage.removeItem('currentSession');
+        localStorage.removeItem('securityLogs');
+        
+        alert('Data fixed! You can now use the website normally.');
+        window.location.href = 'index.html';
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - Fashion Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <h1><i class="fas fa-store"></i> Fashion Store</h1>
+            <a href="shop.html" class="back-btn"><i class="fas fa-arrow-left"></i><span> Back to Shop</span></a>
+        </header>
+        
+        <main class="page-content">
+            <div class="container">
+                <h2>Track Your Order</h2>
+                
+                <div class="tracking-form">
+                    <h3>Enter Your Order Details</h3>
+                    <form id="trackingForm">
+                        <div class="form-group">
+                            <label>Order Number</label>
+                            <input type="text" id="orderNumber" placeholder="e.g., FS123456789" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="trackingEmail" placeholder="your@gmail.com" required>
+                        </div>
+                        <button type="submit" class="submit-btn">Track Order</button>
+                    </form>
+                </div>
+                
+                <div class="tracking-result" id="trackingResult" style="display: none;">
+                    <h3>Order Status</h3>
+                    <div class="order-info">
+                        <div class="order-header">
+                            <h4>Order #<span id="displayOrderNumber"></span></h4>
+                            <span class="order-status" id="orderStatus">Processing</span>
+                        </div>
+                        <p>Placed on: <span id="orderDate"></span></p>
+                        <p>Estimated delivery: <span id="deliveryDate"></span></p>
+                    </div>
+                    
+                    <div class="tracking-timeline">
+                        <div class="timeline-item completed">
+                            <div class="timeline-icon"><i class="fas fa-check"></i></div>
+                            <div class="timeline-content">
+                                <h4>Order Confirmed</h4>
+                                <p>Your order has been received and confirmed</p>
+                                <small>Today, 10:30 AM</small>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item completed">
+                            <div class="timeline-icon"><i class="fas fa-box"></i></div>
+                            <div class="timeline-content">
+                                <h4>Order Packed</h4>
+                                <p>Your items have been carefully packed</p>
+                                <small>Today, 2:15 PM</small>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item active">
+                            <div class="timeline-icon"><i class="fas fa-shipping-fast"></i></div>
+                            <div class="timeline-content">
+                                <h4>In Transit</h4>
+                                <p>Your order is on its way to you</p>
+                                <small>Expected: Tomorrow, 9:00 AM</small>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-icon"><i class="fas fa-home"></i></div>
+                            <div class="timeline-content">
+                                <h4>Delivered</h4>
+                                <p>Your order will be delivered</p>
+                                <small>Expected: Tomorrow, 3:00 PM</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tracking-help">
+                    <h3>Need Help?</h3>
+                    <div class="help-grid">
+                        <div class="help-item">
+                            <i class="fas fa-question-circle"></i>
+                            <h4>Can't find your order number?</h4>
+                            <p>Check your email confirmation or log into your account to view order history.</p>
+                        </div>
+                        <div class="help-item">
+                            <i class="fas fa-clock"></i>
+                            <h4>Tracking not updating?</h4>
+                            <p>Tracking information may take 24-48 hours to update after shipping.</p>
+                        </div>
+                        <div class="help-item">
+                            <i class="fas fa-headset"></i>
+                            <h4>Still need help?</h4>
+                            <p>Contact our support team at support@fashionstore.com or call +1 (555) 123-4567</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        document.getElementById('trackingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const orderNumber = document.getElementById('orderNumber').value;
+            const email = document.getElementById('trackingEmail').value;
+            
+            if (orderNumber && email) {
+                document.getElementById('displayOrderNumber').textContent = orderNumber;
+                document.getElementById('orderDate').textContent = new Date().toLocaleDateString();
+                document.getElementById('deliveryDate').textContent = new Date(Date.now() + 86400000).toLocaleDateString();
+                document.getElementById('trackingResult').style.display = 'block';
+                document.getElementById('trackingResult').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>

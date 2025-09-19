@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Store - Online Shopping</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081559.png">
+    <style>html { scroll-behavior: smooth; }</style>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="advanced-animations.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Fashion Store</h2>
+            </div>
+            
+            <div class="nav-search">
+                <input type="text" id="searchInput" placeholder="Search products...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="nav-icons">
+                <div class="nav-icon" id="themeToggle">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <div class="nav-icon" id="cartIcon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <div class="nav-icon" id="wishlistIcon">
+                    <i class="fas fa-heart"></i>
+                    <span class="wishlist-count" id="wishlistCount">0</span>
+                </div>
+                <div class="nav-icon" id="logoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Latest Fashion Trends</h1>
+            <p>Discover our new collection of modern fashion</p>
+            <button class="hero-btn">Shop Now</button>
+        </div>
+        <div class="hero-image">
+            <div class="hero-slideshow">
+                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop" alt="Fashion Banner" class="hero-slide active">
+                <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&h=600&fit=crop" alt="Fashion Collection" class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=800&h=600&fit=crop" alt="Shopping Experience" class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&h=600&fit=crop" alt="Style & Fashion" class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&h=600&fit=crop" alt="Trendy Outfits" class="hero-slide">
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories">
+        <div class="container">
+            <h2>Categories</h2>
+            <div class="category-grid">
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-female"></i>
+                    </div>
+                    <h3>Women's Clothing</h3>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-male"></i>
+                    </div>
+                    <h3>Men's Clothing</h3>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3>Accessories</h3>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <h3>Bags</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products">
+        <div class="container">
+            <h2>Featured Products</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="women">Women</button>
+                <button class="filter-btn" data-filter="men">Men</button>
+                <button class="filter-btn" data-filter="accessories">Accessories</button>
+                <button class="filter-btn" data-filter="bags">Bags</button>
+            </div>
+            <div class="products-grid main" id="productsGrid">
+                <!-- Products will be loaded here via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3>Shopping Cart</h3>
+                <span class="close-cart" id="closeCart">&times;</span>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be loaded here -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <strong>Total: $<span id="cartTotal">0</span></strong>
+                </div>
+                <button class="checkout-btn" onclick="main.handleCheckout()">Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Modal -->
+    <div class="wishlist-modal" id="wishlistModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>My Wishlist</h3>
+                <span class="close-modal" id="closeWishlist">&times;</span>
+            </div>
+            <div class="wishlist-items" id="wishlistItems">
+                <!-- Wishlist items will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-modal-content">
+            <div class="search-modal-header">
+                <h3>Search Results</h3>
+                <span class="close-modal" id="closeSearch">&times;</span>
+            </div>
+            <div class="search-results" id="searchResults">
+                <!-- Search results will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Checkout</h3>
+                <span class="close-modal" id="closeCheckout">&times;</span>
+            </div>
+            <div class="checkout-content" id="checkoutContent">
+                <!-- Checkout content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Fashion Store</h3>
+                    <p>Created by :</p>
+                    <div class="social-icons">
+                        <a href="https://www.linkedin.com/in/ahmad-alhalabi-b72446377" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://github.com/Ahmadhalabi2" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://t.me/ahmadhalabi01" target="_blank"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Customer Service</h4>
+                    <ul>
+                        <li><a href="footer-pages/contact.html">Contact Us</a></li>
+                        <li><a href="footer-pages/faq.html">FAQ</a></li>
+                        <li><a href="footer-pages/return-policy.html">Return Policy</a></li>
+                        <li><a href="footer-pages/track-order.html">Track Order</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Information</h4>
+                    <ul>
+                        <li><a href="footer-pages/about.html">About Us</a></li>
+                        <li><a href="footer-pages/terms.html">Terms & Conditions</a></li>
+                        <li><a href="footer-pages/privacy.html">Privacy Policy</a></li>
+                        <li><a href="footer-pages/payment-methods.html">Payment Methods</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Newsletter</h4>
+                    <p>Subscribe to get the latest offers</p>
+                    <div class="newsletter">
+                        <input type="email" placeholder="Email Address">
+                        <button>Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Fashion Store. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script src="security.js"></script>
+    <script src="notifications.js"></script>
+
+    <script src="loading-system.js"></script>
+    <script src="interactive-effects.js"></script>
+    <script src="particle-system.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>
