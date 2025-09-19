@@ -398,10 +398,15 @@ body {
     border-radius: 15px;
     width: 90%;
     max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    margin-top: -10px;
     animation: modalSlideIn 0.3s ease;
+}
+
+#addProductModal .modal-content,
+#editProductModal .modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 @keyframes modalSlideIn {
@@ -423,11 +428,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
+    
 }
 
 .modal-header h3 {
     margin: 0;
     font-size: 20px;
+   
 }
 
 .close {
@@ -444,10 +452,13 @@ body {
 
 .modal-form {
     padding: 35px;
+    
+    
 }
 
 .form-group {
     margin-bottom: 25px;
+     
 }
 
 .form-group label {
@@ -456,6 +467,8 @@ body {
     font-weight: 600;
     color: #333;
     font-size: 15px;
+    
+    
 }
 
 .form-group input,
@@ -467,6 +480,7 @@ body {
     font-size: 15px;
     transition: all 0.3s ease;
     background: #fafbfc;
+    
 }
 
 .form-group input:focus,

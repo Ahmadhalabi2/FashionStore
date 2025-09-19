@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentUser === ADMIN_EMAIL) {
             window.location.href = 'dashboard.html';
         } else {
+            // Clear cart and wishlist on user auto-login redirect
+            localStorage.removeItem('cart');
+            localStorage.removeItem('wishlist');
             window.location.href = 'shop.html';
         }
     }
@@ -97,6 +100,26 @@ async function handleLogin(e) {
         return;
     }
 
+    // Merge guest cart with user cart on login
+    const guestCartString = localStorage.getItem('guest_cart');
+    if (guestCartString) {
+        const guestCart = JSON.parse(guestCartString);
+        const userCartString = localStorage.getItem('cart');
+        let userCart = userCartString ? JSON.parse(userCartString) : [];
+
+        guestCart.forEach(item => {
+            const existing = userCart.find(ci => ci.id === item.id);
+            if (existing) {
+                existing.quantity += item.quantity;
+            } else {
+                userCart.push(item);
+            }
+        });
+
+        localStorage.setItem('cart', JSON.stringify(userCart));
+        localStorage.removeItem('guest_cart');
+    }
+
     
     // Check regular users
     const userData = localStorage.getItem(`user_${email}`);
@@ -113,13 +136,25 @@ async function handleLogin(e) {
         }
         
         if (window.loading) {
-            window.loading.show('جاري تسجيل الدخول...', 1200).then(() => {
+            const userName = parsedData.user.name || 'المستخدم';
+            window.loading.show(`جاري تسجيل الدخول، ${userName}...`, 1200).then(() => {
                 localStorage.setItem('currentUser', email);
                 localStorage.setItem('userRole', 'user');
                 if (rememberMe) {
                     localStorage.setItem('rememberLogin', 'true');
                 }
-                
+
+                // Load user's saved cart and wishlist into global keys
+                if (parsedData.cart) {
+                    localStorage.setItem('cart', JSON.stringify(parsedData.cart));
+                } else {
+                    localStorage.removeItem('cart');
+                }
+                if (parsedData.wishlist) {
+                    localStorage.setItem('wishlist', JSON.stringify(parsedData.wishlist));
+                } else {
+                    localStorage.removeItem('wishlist');
+                }
 
                 setTimeout(() => {
                     window.location.href = 'shop.html';
@@ -131,7 +166,7 @@ async function handleLogin(e) {
             if (rememberMe) {
                 localStorage.setItem('rememberLogin', 'true');
             }
-            
+
             showAlert('Login successful!', 'success');
             setTimeout(() => {
                 window.location.href = 'shop.html';
@@ -178,7 +213,9 @@ async function handleRegister(e) {
         name: name,
         email: email,
         password: password,
-        loginDate: new Date().toLocaleDateString('en-GB')
+        loginDate: new Date().toLocaleDateString('en-GB'),
+        cart: [],
+        wishlist: []
     };
     
     if (window.loading) {

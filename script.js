@@ -24,7 +24,8 @@ class Main {
         this.updateWishlistCount();
         this.startHeroSlideshow();
         this.initTheme();
-        
+        this.updateLoginLogoutIcon();
+
         // Check for product updates when window gets focus
         window.addEventListener('focus', () => {
             this.checkForProductUpdates();
@@ -132,13 +133,50 @@ class Main {
                     if (userData) {
                         this.user = userData.user;
                         this.orders = userData.orders || [];
+
+                        // Load user's saved cart and wishlist
+                        if (userData.cart) {
+                            this.cart = userData.cart;
+                            localStorage.setItem('cart', JSON.stringify(this.cart));
+                        } else {
+                            this.cart = [];
+                            localStorage.removeItem('cart');
+                        }
+                        if (userData.wishlist) {
+                            this.wishlist = userData.wishlist;
+                            localStorage.setItem('wishlist', JSON.stringify(this.wishlist));
+                        } else {
+                            this.wishlist = [];
+                            localStorage.removeItem('wishlist');
+                        }
                     }
+                }
+                // Merge guest cart with user cart
+                const guestCartString = localStorage.getItem('guest_cart');
+                if (guestCartString) {
+                    const guestCart = JSON.parse(guestCartString);
+                    guestCart.forEach(item => {
+                        const existing = this.cart.find(ci => ci.id === item.id);
+                        if (existing) {
+                            existing.quantity += item.quantity;
+                        } else {
+                            this.cart.push(item);
+                        }
+                    });
+                    localStorage.removeItem('guest_cart');
+                    this.saveCartToStorage();
                 }
             } catch (error) {
                 console.error('Error loading user session:', error);
                 // Clear corrupted data
                 localStorage.removeItem('currentUser');
                 localStorage.removeItem(`user_${currentUser}`);
+            }
+        } else {
+            // Load guest cart if no user logged in
+            const guestCartString = localStorage.getItem('guest_cart');
+            if (guestCartString) {
+                this.cart = JSON.parse(guestCartString);
             }
         }
     }
@@ -227,10 +265,7 @@ class Main {
             this.toggleTheme();
         });
 
-        // Logout button
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            this.logout();
-        });
+
 
 
 
@@ -630,6 +665,7 @@ class Main {
     handleCheckout() {
         if (!this.user) {
             alert('Please login through the main login page to checkout');
+            window.location.href = 'login.html';
             return;
         }
         this.showCheckoutModal();
@@ -653,43 +689,61 @@ class Main {
     login() {
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
-        
+
         if (!email || !password) {
             alert('Please enter both email and password');
             return;
         }
-        
+
         if (!this.validateEmail(email)) {
             alert('Email must be in format ******@gmail.com');
             return;
         }
-        
+
         const savedUserData = localStorage.getItem(`user_${email}`);
-        
+
         if (!savedUserData) {
             alert('Account not found. Please create a new account.');
             this.showRegister();
             return;
         }
-        
+
         const userData = JSON.parse(savedUserData);
-        
+
         if (userData.user.password !== password) {
             alert('Incorrect password. Please try again.');
             return;
         }
-        
+
         this.user = userData.user;
         this.orders = userData.orders || [];
-        
+
+        // Load user's saved cart and wishlist into global keys
+        if (userData.cart) {
+            this.cart = userData.cart;
+            localStorage.setItem('cart', JSON.stringify(this.cart));
+        } else {
+            this.cart = [];
+            localStorage.removeItem('cart');
+        }
+        if (userData.wishlist) {
+            this.wishlist = userData.wishlist;
+            localStorage.setItem('wishlist', JSON.stringify(this.wishlist));
+        } else {
+            this.wishlist = [];
+            localStorage.removeItem('wishlist');
+        }
+
         localStorage.setItem('currentUser', email);
-        
+
         document.getElementById('loginModal').style.display = 'none';
         document.body.style.overflow = 'auto';
-        
+
+        this.updateCartCount();
+        this.updateWishlistCount();
         this.updateUserProfile();
         this.updateProfileDisplay();
-        
+
         if (this.cart.length > 0) {
             this.showCheckoutModal();
         }
@@ -857,7 +911,9 @@ class Main {
         if (this.user) {
             const userData = {
                 user: this.user,
-                orders: this.orders
+                orders: this.orders,
+                cart: this.cart,
+                wishlist: this.wishlist
             };
             // Save as regular JSON to avoid encryption issues
             localStorage.setItem(`user_${this.user.email}`, JSON.stringify(userData));
@@ -866,10 +922,33 @@ class Main {
     
     logout() {
         if (confirm('Are you sure you want to logout?')) {
+            // Automatically save current cart and wishlist to user's account data
+            if (this.user) {
+                const userData = JSON.parse(localStorage.getItem(`user_${this.user.email}`)) || { user: this.user, orders: [] };
+                userData.cart = this.cart;
+                userData.wishlist = this.wishlist;
+                localStorage.setItem(`user_${this.user.email}`, JSON.stringify(userData));
+            }
+
             localStorage.removeItem('currentUser');
             localStorage.removeItem('userRole');
             localStorage.removeItem('rememberLogin');
-            window.location.href = 'index.html';
+            localStorage.removeItem('cart'); // Remove global cart
+            localStorage.removeItem('wishlist'); // Remove global wishlist
+            localStorage.removeItem('guest_cart'); // Remove guest cart
+
+            // Reset instance variables
+            this.cart = [];
+            this.wishlist = [];
+            this.user = null;
+            this.orders = [];
+
+            // Update UI
+            this.updateCartCount();
+            this.updateWishlistCount();
+            this.updateLoginLogoutIcon();
+
+            window.location.href = 'shop.html'; // Stay on shop as guest
         }
     }
 
@@ -997,12 +1076,39 @@ class Main {
         }
     }
     
-    saveCartToStorage() {
-        localStorage.setItem('cart', JSON.stringify(this.cart));
+    updateLoginLogoutIcon() {
+        const btn = document.getElementById('loginLogoutBtn');
+        if (this.user) {
+            btn.innerHTML = 'Logout';
+            btn.title = 'Logout';
+            btn.onclick = () => this.logout();
+        } else {
+            btn.innerHTML = 'Login';
+            btn.title = 'Login';
+            btn.onclick = () => window.location.href = 'login.html';
+        }
     }
-    
+
+    saveCartToStorage() {
+        if (this.user) {
+            localStorage.setItem('cart', JSON.stringify(this.cart));
+            // Save cart to user's account data
+            const userData = JSON.parse(localStorage.getItem(`user_${this.user.email}`)) || { user: this.user, orders: [] };
+            userData.cart = this.cart;
+            localStorage.setItem(`user_${this.user.email}`, JSON.stringify(userData));
+        } else {
+            localStorage.setItem('guest_cart', JSON.stringify(this.cart));
+        }
+    }
+
     saveWishlistToStorage() {
         localStorage.setItem('wishlist', JSON.stringify(this.wishlist));
+        if (this.user) {
+            // Save wishlist to user's account data
+            const userData = JSON.parse(localStorage.getItem(`user_${this.user.email}`)) || { user: this.user, orders: [] };
+            userData.wishlist = this.wishlist;
+            localStorage.setItem(`user_${this.user.email}`, JSON.stringify(userData));
+        }
     }
     
     showForgotPassword() {

@@ -8,7 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    initDashboard();
+    // Show loading screen for admin login
+    loading.show('جاري تسجيل دخول المدير', 2000).then(() => {
+        initDashboard();
+    });
 });
 
 // Dashboard data
@@ -362,6 +365,14 @@ function showAddProductModal() {
     document.getElementById('addProductModal').style.display = 'block';
 }
 
+function showEditCategoryModal() {
+    document.getElementById('editCategoryModal').style.display = 'block';
+}
+
+function showEditProductModal() {
+    document.getElementById('editProductModal').style.display = 'block';
+}
+
 function hideModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
     // Reset form
@@ -503,7 +514,7 @@ function editProduct(id) {
     const product = products.find(p => p.id === id);
     if (product) {
         editingProductId = id;
-        
+
         // Fill the edit form with current product data
         document.getElementById('editProductTitle').value = product.title;
         document.getElementById('editProductCategory').value = product.category;
@@ -513,9 +524,12 @@ function editProduct(id) {
         document.getElementById('editProductRating').value = product.rating;
         document.getElementById('editProductReviews').value = product.reviews;
         document.getElementById('editProductBadge').value = product.badge;
-        
+
         // Show the edit modal
         document.getElementById('editProductModal').style.display = 'block';
+
+        // Scroll to the modal smoothly
+        document.getElementById('editProductModal').scrollIntoView({ behavior: 'smooth' });
     }
 }
 
@@ -647,10 +661,31 @@ function toggleSidebar() {
 
 function logout() {
     if (confirm('Are you sure you want to logout?')) {
+        const currentUser = localStorage.getItem('currentUser');
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+        // Automatically save current global cart and wishlist to user's account data
+        if (currentUser) {
+            const userData = JSON.parse(localStorage.getItem(`user_${currentUser}`)) || { user: {}, orders: [] };
+            userData.cart = cart;
+            userData.wishlist = wishlist;
+            localStorage.setItem(`user_${currentUser}`, JSON.stringify(userData));
+        }
+
+        // Clear user session data
         localStorage.removeItem('currentUser');
         localStorage.removeItem('userRole');
         localStorage.removeItem('rememberLogin');
-        window.location.href = 'index.html';
+
+        // Clear global cart and wishlist to reset shop page state
+        localStorage.removeItem('cart');
+        localStorage.removeItem('wishlist');
+
+        // Optionally, clear any other session-specific data here
+
+        // Redirect to shop page with reset state
+        window.location.href = 'shop.html';
     }
 }
 
